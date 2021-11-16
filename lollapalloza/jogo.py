@@ -4,6 +4,7 @@ from sys import exit
 from sorteio import sortearSaque
 from raquete import *
 from bola import *
+import random
 
 #TABELA DE CORES
 preto = (1,1,1)
@@ -115,26 +116,16 @@ while True:
     tela.blit(p2_formatado, (1073, 53))
     tela.blit(imagem_seta, posicao_seta)
 
-
-    sobreposicao1 = (x_bola - x_rqt1, y_bola - y_rqt1)
-    sobreposicao2 = (x_bola - x_rqt2, y_bola - y_rqt2)
-
-    colisao1 = mascara_rqt1.overlap(mascara_bola, sobreposicao1)
-    colisao2 = mascara_rqt2.overlap(mascara_bola, sobreposicao2)
+    #bota tecla aqui
 
     tecla = pygame.key.get_pressed()
-
+    '''
     if saque == True and not colisao1 and not colisao2:
         if tecla[K_t]:
             y_bola = B_praCima(y_bola, 130)
         if tecla[K_g]:
             y_bola = B_praBaixo(y_bola, 587)
-
-   
-    if colisao1 or colisao2:
-        direita = not direita
-        batidas += 1
-
+    '''
     #ações do 1º jogador
     if tecla[K_w]:
         y_rqt1 = R_praCima(y_rqt1, 120)
@@ -158,14 +149,40 @@ while True:
     tela.blit(raquete1, (x_rqt1, y_rqt1))
     tela.blit(raquete2, (x_rqt2, y_rqt2))
 
+    sobreposicao1 = (x_bola - x_rqt1, y_bola - y_rqt1)
+    sobreposicao2 = (x_bola - x_rqt2, y_bola - y_rqt2)
+
+    colisao1 = mascara_rqt1.overlap(mascara_bola, sobreposicao1)
+    colisao2 = mascara_rqt2.overlap(mascara_bola, sobreposicao2)
+
+    if colisao1 or colisao2:
+        direita = not direita
+        if(direita):
+            x_bola += 12 + v_x_bolinha
+        else:
+            x_bola -= 12 + v_x_bolinha
+
+        batidas += 1
+        v_y_bolinha = randint(-10,10)
+
+
     #atualiza a velocidade da bolinha de acordo com o número de batidas
-    v_x_bolinha = int((min(batidas, 1)*3) * pow(1.005, batidas-1))
+    v_x_bolinha = int((min(batidas, 1)*10) * pow(1.005, batidas-1))
 
     #atualiza a posição da bolinha de acordo com a velocidade dela
     if(direita):
         x_bola += v_x_bolinha
     else:
         x_bola -= v_x_bolinha
+    y_bola += v_y_bolinha
+
+    #se certifica de que a bola não passou dos limites da tela
+    if(y_bola < 0):
+        y_bola = 0
+        v_y_bolinha = -v_y_bolinha
+    if(y_bola > altura):
+        y_bola = altura
+        v_y_bolinha = -v_y_bolinha
 
     tela.blit(bola1, (x_bola, y_bola))
     

@@ -57,6 +57,19 @@ mascara_bola = pygame.mask.from_surface(bola1)
 mascara_rqt1 = pygame.mask.from_surface(raquete1)
 mascara_rqt2 = pygame.mask.from_surface(raquete2)
 
+#velocidade da bolinha
+v_x_bolinha = 0
+v_y_bolinha = 0
+
+#vezes que alguma raquete bateu na bola
+batidas = 0
+
+#lado que a bolinha esta indo
+direita = False
+
+if(posicao_seta[1] == 55):
+    direita = True
+
 while True:
     relogio.tick(FPS)
     
@@ -119,7 +132,8 @@ while True:
 
    
     if colisao1 or colisao2:
-        saque = False
+        direita = not direita
+        batidas += 1
 
     #ações do 1º jogador
     if tecla[K_w]:
@@ -143,6 +157,16 @@ while True:
     
     tela.blit(raquete1, (x_rqt1, y_rqt1))
     tela.blit(raquete2, (x_rqt2, y_rqt2))
+
+    #atualiza a velocidade da bolinha de acordo com o número de batidas
+    v_x_bolinha = int((min(batidas, 1)*3) * pow(1.005, batidas-1))
+
+    #atualiza a posição da bolinha de acordo com a velocidade dela
+    if(direita):
+        x_bola += v_x_bolinha
+    else:
+        x_bola -= v_x_bolinha
+
     tela.blit(bola1, (x_bola, y_bola))
     
     pygame.display.flip()
